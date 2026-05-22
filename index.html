@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Surprise!</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #fedac2 0%, #edb5bf 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            color: #333;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            z-index: 10;
+            transition: all 0.5s ease;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #d63384;
+        }
+
+        /* Countdown Style */
+        #countdown-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #4a4a4a;
+            letter-spacing: 2px;
+            margin: 20px 0;
+        }
+
+        /* Lock / Password Style */
+        .hidden {
+            display: none !important;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 15px 0;
+            border: 2px solid #edb5bf;
+            border-radius: 25px;
+            font-size: 1rem;
+            text-align: center;
+            outline: none;
+        }
+
+        input[type="password"]:focus {
+            border-color: #d63384;
+        }
+
+        button {
+            background-color: #d63384;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #b02366;
+        }
+
+        .error-msg {
+            color: red;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        /* Celebration Style */
+        .birthday-text {
+            font-size: 2.5rem;
+            color: #d63384;
+            font-weight: bold;
+            animation: pop 0.5s ease-out;
+        }
+
+        .cake {
+            font-size: 5rem;
+            margin: 20px 0;
+            animation: bounce 2s infinite;
+        }
+
+        .sorry-text {
+            font-size: 1.2rem;
+            color: #6c757d;
+            margin-top: 20px;
+            font-style: italic;
+        }
+
+        /* Balloon Elements */
+        .balloon {
+            position: absolute;
+            width: 50px;
+            height: 65px;
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            bottom: -100px;
+            cursor: pointer;
+            animation: floatUp 4s ease-in forwards;
+        }
+
+        .balloon::after {
+            content: "▲";
+            font-size: 10px;
+            color: inherit;
+            position: absolute;
+            bottom: -8px;
+            left: 20px;
+        }
+
+        /* Animations */
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-120vh) rotate(20deg); opacity: 0; }
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0.5); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SECTION 1: Countdown Container -->
+    <div id="countdown-section" class="container">
+        <h2>The Surprise is Loading...</h2>
+        <div id="countdown-display">00:02:02</div>
+        <p>Sabar ka phal meetha hota hai 😉</p>
+    </div>
+
+    <!-- SECTION 2: Lock / Password Container -->
+    <div id="lock-section" class="container hidden">
+        <h2>🔒 It's Locked!</h2>
+        <p>Aap ko locked toh dikhega, chabi dalo ab!</p>
+        <input type="password" id="password-input" placeholder="Enter password here...">
+        <button onclick="checkPassword()">Unlock</button>
+        <div id="error-message" class="error-msg"></div>
+    </div>
+
+    <!-- SECTION 3: Birthday Celebration Container -->
+    <div id="celebration-section" class="container hidden">
+        <div class="birthday-text">🎉 Happy Birthday to Rafay! 🎂</div>
+        <div class="cake">🎂✨🎈</div>
+        <div class="sorry-text">Sorry yar... 🥺👉👈</div>
+    </div>
+
+    <script>
+        // Countdown Setup: 00 hours, 2 minutes, 2 seconds = 122 seconds total
+        let totalSeconds = 122; 
+        const countdownDisplay = document.getElementById('countdown-display');
+        const countdownSection = document.getElementById('countdown-section');
+        const lockSection = document.getElementById('lock-section');
+        const celebrationSection = document.getElementById('celebration-section');
+
+        // Timer Function
+        const timer = setInterval(() => {
+            let hours = Math.floor(totalSeconds / 3600);
+            let minutes = Math.floor((totalSeconds % 3600) / 60);
+            let seconds = totalSeconds % 60;
+
+            // Formatting to 2 digits (e.g., 02 instead of 2)
+            hours = hours < 10 ? '0' + hours : hours;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+
+            countdownDisplay.textContent = `${hours}:${minutes}:${seconds}`;
+
+            if (totalSeconds <= 0) {
+                clearInterval(timer);
+                // Countdown khatam, lock show karo
+                countdownSection.classList.add('hidden');
+                lockSection.classList.remove('hidden');
+            }
+
+            totalSeconds--;
+        }, 1000);
+
+        // Password Verification Logic
+        function checkPassword() {
+            const userInput = document.getElementById('password-input').value;
+            const errorMessage = document.getElementById('error-message');
+
+            // Password check (case-sensitive ya insensitive handle karne ke liye toLowerCase lagaya hai)
+            if (userInput.toLowerCase() === 'princess') {
+                lockSection.classList.add('hidden');
+                celebrationSection.classList.remove('hidden');
+                startCelebration();
+            } else {
+                errorMessage.textContent = "Galat password! Dobara koshish karein 🤫";
+            }
+        }
+
+        // Celebration & Balloons Burst Logic
+        function startCelebration() {
+            const colors = ['#ff4081', '#00e676', '#00b0ff', '#ffea00', '#d500f9', '#ff9100'];
+            let balloonCount = 0;
+
+            // 24 Balloons create karne ke liye interval
+            const balloonInterval = setInterval(() => {
+                if (balloonCount >= 24) {
+                    clearInterval(balloonInterval);
+                    return;
+                }
+
+                const balloon = document.createElement('div');
+                balloon.className = 'balloon';
+                
+                // Random positions aur colors
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                balloon.style.backgroundColor = randomColor;
+                balloon.style.color = randomColor; // Teer/triangle ke liye
+                balloon.style.left = Math.random() * 100 + 'vw';
+                // Thora speed variation taake natural lage
+                balloon.style.animationDuration = (Math.random() * 2 + 3) + 's'; 
+
+                // Balloon phorne (burst) karne ka logic click par
+                balloon.addEventListener('click', () => {
+                    balloon.style.display = 'none'; // Phoot gaya!
+                });
+
+                document.body.appendChild(balloon);
+                balloonCount++;
+            }, 200); // Har 200ms baad aik balloon screen par ayega jab tak 24 poore nahi hotay
+        }
+    </script>
+</body>
+</html>
